@@ -13,7 +13,7 @@ if __name__ == '__main__':
     with open('key.txt', 'r') as f:              #reads the openai key
         aiKey = f.readline().strip()
 
-    print('\n AutoSlides Beta Test')
+    print('\nAutoSlides Beta Test\n')
 
     topic = input('Presentation Topic: ')
     slidesNumber = int(input('Amount of slides: '))
