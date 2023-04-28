@@ -19,7 +19,6 @@ if __name__ == '__main__':
     slidesNumber = int(input('Amount of slides: '))
 
 
-    time.sleep(2)
 
     slides = generate(f'I am making a powerpoint presentation about {topic}. Create a single line python list with the slide titles of each slide. Create a max of {slidesNumber} slides.', aiKey)
     slides = strToList(slides)
@@ -28,6 +27,9 @@ if __name__ == '__main__':
     for slide in slides:
         print(slide)
 
+    input('Start? ')
+
+    time.sleep(2)
     slideText = ''
     for slide in slides:
         slideText = generate(f'I am making a powerpoint presentation about {topic}. Write the body for this slide title: {slide}.', aiKey).strip()
