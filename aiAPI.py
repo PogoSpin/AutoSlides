@@ -3,10 +3,11 @@ import openai
 
 def generate(prompt, key):
     openai.api_key = key
-    answer = openai.Completion.create(
-        model='gpt-3.5-turbo',
-        prompt = prompt,
-        max_tokens=100,
-        temperature=0
+    completion = openai.ChatCompletion.create(
+    model='gpt-3.5-turbo',
+    messages=[
+        {'role': 'user', 'content': prompt}
+    ]
     )
-    return answer.choices[0].text
+
+    return completion.choices[0].message.content

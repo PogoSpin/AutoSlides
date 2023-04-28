@@ -20,14 +20,15 @@ if __name__ == '__main__':
 
 
 
-    slides = generate(f'I am making a powerpoint presentation about {topic}. Create a single line python list with the slide titles of each slide. Create a max of {slidesNumber} slides.', aiKey)
+    slides = generate(f'I am making a powerpoint presentation about {topic}. Create a single line python list with the slide titles of each slide like this ["slide1", "slide2", "slide3"]. Create a max of {slidesNumber} slides.', aiKey)
+    print(repr(slides))
     slides = strToList(slides)
 
     print('This is the slides it will create: \n')                  # shows the slides it will make
     for slide in slides:
         print(slide)
 
-    input('Start? ')
+    input('\nStart? ')
 
     time.sleep(2)
     slideText = ''
