@@ -1,16 +1,22 @@
 import pyautogui as pa
 
-class Positions:
-    title = (1138, 845)
-    text = (1476, 1154)
-    newSlide = (100, 467)
+class Slides:
+    mouseMoveSpeed = 0.5
+    def __init__(self, titlePos, textPos, newSlidePos):
+        self.title = titlePos                   # (x, y) pos of the title box
+        self.text = textPos                     # (x, y) pos of the main text box
+        self.newSlide = newSlidePos             # (x, y) pos of the new slide button
 
-def createSlide(title, text):
-    pa.moveTo(Positions.newSlide[0], Positions.newSlide[1], 1)
-    pa.click()
-    pa.moveTo(Positions.title[0], Positions.title[1], 1)
-    pa.click()
-    pa.write(title, 0.01)
-    pa.moveTo(Positions.text[0], Positions.text[1], 1)
-    pa.click()
-    pa.write(text, 0.01)
+    def createNewSlide(self, title, text):
+        pa.moveTo(self.newSlide[0], self.newSlide[1], Slides.mouseMoveSpeed)
+        pa.click()
+
+        pa.moveTo(self.title[0], self.title[1], Slides.mouseMoveSpeed)
+        pa.click()
+
+        pa.write(title, 0.01)
+
+        pa.moveTo(self.text[0], self.text[1], Slides.mouseMoveSpeed)
+        pa.click()
+
+        pa.write(text, 0.01)
