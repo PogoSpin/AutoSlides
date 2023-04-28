@@ -1,35 +1,96 @@
 import pyautogui as pa           # run "pip install pyautogui" to intall
-from aiAPI import *
-import slideAPI
-import ast
-import time
+import gptAPI as gpt
+import ast, time, data
+from slideAPI import Slides
 
 def strToList(string):
-    return ast.literal_eval(string.strip())          # removes \n and onverts string list into a list. Exp:  "[1, 2, 3]" becomes [1, 2, 3]
+    return ast.literal_eval(string.strip())          # removes \n and converts string list into a list. Exp:  "[1, 2, 3]" becomes [1, 2, 3]
 
 if __name__ == '__main__':
-    with open('key.txt', 'r') as f:              #reads the openai key
-        aiKey = f.readline().strip()
+
+    # Load Data
+    aiKey = data.key                   # gets your api key from data.py
+    positions = data.positions         # gets the button positions from data.py
+
 
     print('\nAutoSlides Beta Test\n')
 
+    # Create Data
+    if aiKey == '':
+        while aiKey == '':
+            print('You have not yet typed in your API key. You can get yours through "https://platform.openai.com/account/api-keys".')
+            aiKey = input('API Key: ')
+        
+        with open('data.py', 'r+') as f:
+            content = f.read()
+            # Replace the empty quotes with your text
+            new_content = content.replace("''", f"'{aiKey}'")
+            f.seek(0)
+            f.write(new_content)
+            f.truncate()
+
+        print()
+
+    # Creating position
+    if not positions:              # if there is no position data yet
+        positions = []
+
+        print('No position data found so it will be created now.\n')
+        print('Because this is the first time you lauched the program you will have to record the positions of all the google slide elements.')
+        print('Just follow the next instructions. \n')
+        print('Prepare you google slides presentation in the background with this terminal in front. ')
+        input('When ready, hover your mouse over the "add slide button" (the plus sign on the top left corner) and press enter.')
+
+        x, y = pa.position()                             #saves mouse pos
+        positions.append((x, y))
+
+        input('Done. Now when ready, hover your mouse over the title text box and press enter. (this is where the AI will type the title of each slide) ')
+
+        x, y = pa.position()                             #saves mouse pos
+        positions.append((x, y))
+
+        input('Done. Now last of all, when ready, hover your mouse over the main body text box and press enter. (this is where the AI will type in all the text for each slide) ')
+
+        x, y = pa.position()                             #saves mouse pos
+        positions.append((x, y))
+
+        print("\nPerfect, the positions have been saved to next time you won't have to do this again. ")
+        print('Now you can actually start. \n')
+
+        with open('data.py', 'r+') as f:
+            content = f.read()
+            # Replace the empty quotes with your text
+            new_content = content.replace("None", f"{positions}")
+            f.seek(0)
+            f.write(new_content)
+            f.truncate()
+
+
+    # Start of actual program. The rest above was setup.
+
+    slides = Slides(positions[0], positions[1], positions[2])                  # creats a slides object and loads in the positios of the elements
+
+
+
     topic = input('Presentation Topic: ')
     amountOfSlides = int(input('Amount of slides: '))
+    wordLimit = int(input('Max words per slide: '))
 
 
 
-    genSlides = generate(f'I am making a powerpoint presentation about {topic}. Create a single line python list with the slide titles of each slide like this ["slide1", "slide2", "slide3"]. Create a max of {amountOfSlides} slides.', aiKey)
-    genSlides = strToList(genSlides)
+    generatedSlides = gpt.generate(f'I am making a powerpoint presentation about {topic}. Create a single line python list with the slide titles of each slide like this ["slide1", "slide2", "slide3"]. Create a max of {amountOfSlides} slides.', aiKey)
+    generatedSlides = strToList(generatedSlides)
 
     print('This is the slides it will create: \n')                  # shows the slides it will make
-    for slide in genSlides:
+    for slide in generatedSlides:
         print(slide)
 
     input('\nStart? ')
 
     time.sleep(2)
     slideText = ''
-    for slide in genSlides:
-        slideText = generate(f'I am making a powerpoint presentation about {topic}. Write the body for this slide title: {slide}.', aiKey).strip()
-        slideAPI.createSlide(slide, slideText)
-        print(f' \n {slide} \n {slideText}')
+    for slide in generatedSlides:
+        slideText = gpt.generate(f'I am making a powerpoint presentation about {topic}. Write the body for this slide title: {slide}. Use a max of {wordLimit} words. ', aiKey).strip()
+        slides.createNewSlide(slide, slideText)
+
+    print('\nTask Completed! ')
