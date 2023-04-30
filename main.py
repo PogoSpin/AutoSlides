@@ -66,7 +66,13 @@ if __name__ == '__main__':
             f.truncate()
 
 
-    # Start of actual program. The rest above was setup.
+
+
+
+
+    # Start of actual program. The rest above was setup
+
+
 
     slides = Slides(positions[0], positions[1], positions[2])                  # creats a slides object and loads in the positios of the elements
 
@@ -76,21 +82,66 @@ if __name__ == '__main__':
     amountOfSlides = int(input('Amount of slides: '))
     wordLimit = int(input('Max words per slide: '))
 
+    
+    
+    # Safely generates the slides so if it doesn't succed it will try again
+
+    amountOfAttempts = 6     # How many more times it will attempt to generate text if it doesn't work the first time
 
 
-    generatedSlides = gpt.generate(f'I am making a powerpoint presentation about {topic}. Create a single line python list with the slide titles of each slide like this ["slide1", "slide2", "slide3"]. Create a max of {amountOfSlides} slides.', aiKey)
+    generatedSlides = None
+
+    for i in range(amountOfAttempts):
+        succeded = False
+
+        try:
+            generatedSlides = gpt.generate(f'I am making a powerpoint presentation about {topic}. Create a single line python list with the slide titles of each slide like this ["slide1", "slide2", "slide3"]. Create a max of {amountOfSlides} slides.', aiKey)
+            succeded = True
+        except:
+            print(f'Failed to generate slide titles on try {i+1}. Trying again in {i**2} second\s... ')
+            time.sleep(i**2)
+
+        if succeded:
+            break
+    
+    if succeded:
+        print()
+    else:
+        print(f'\nFailed to generate slide titles after {amountOfAttempts + 1} attempts. ')
+        quit()
+
+
+
     generatedSlides = strToList(generatedSlides)
 
-    print('This is the slides it will create: \n')                  # shows the slides it will make
+    print('These is the slides it will create: \n')                  # shows the slides it will make
     for slide in generatedSlides:
         print(slide)
 
     input('\nStart? ')
 
     time.sleep(2)
-    slideText = ''
     for slide in generatedSlides:
-        slideText = gpt.generate(f'I am making a powerpoint presentation about {topic}. Write the body for this slide title: {slide}. Use a max of {wordLimit} words. ', aiKey).strip()
-        slides.createNewSlide(slide, slideText)
+        slideText = None
+
+        for i in range(amountOfAttempts): # Attempts to generate slide text again if it fails
+            succeded = False
+
+            try:
+                slideText = gpt.generate(f'I am making a powerpoint presentation about {topic}. Write the body for this slide title: {slide}. Use a max of {wordLimit} words. ', aiKey).strip()
+                succeded = True
+            except:
+                print(f'Failed to generate slide text on try {i+1}. Trying again in {i**2} second\s... ')
+                time.sleep(i**2)
+
+            if succeded:
+                break
+    
+        if succeded:
+            slides.createNewSlide(slide, slideText)
+        else:
+            print(f'\nFailed to generate slide content after {amountOfAttempts} attempts. ')
+            quit()
+
 
     print('\nTask Completed! ')
