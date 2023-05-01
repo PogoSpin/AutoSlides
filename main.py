@@ -80,7 +80,7 @@ if __name__ == '__main__':
 
     topic = input('Presentation Topic: ')
     amountOfSlides = int(input('Amount of slides: '))
-    wordLimit = int(input('Max words per slide: '))
+    wordLimit = int(input('Word amount per slide: '))
 
     
     
