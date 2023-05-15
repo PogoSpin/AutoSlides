@@ -1,5 +1,5 @@
 import customtkinter as ctk
-import webbrowser
+import webbrowser, time
 
 class ScrollableEntryFrame(ctk.CTkScrollableFrame):
     def __init__(self, master, item_list, command=None, **kwargs):
@@ -47,6 +47,9 @@ class App(ctk.CTk):
         def helpButton():
             webbrowser.open('https://platform.openai.com/account/api-keys')
 
+        def generateSlides():
+            self.slidesFrame = ScrollableEntryFrame(self, label_text = 'Generated Slides', width = 250, height = 300, item_list=[f'item {i}' for i in range(50)])
+            self.slidesFrame.place(x = 700, y = 150)
 
         # widgets
 
@@ -60,8 +63,11 @@ class App(ctk.CTk):
         self.numOfSlides = ctk.CTkEntry(self, placeholder_text = 'Amount of Slides', width = 350)
         self.numOfSlides.place(x = centerObj(350), y = 190)
 
-        self.genSlides = ctk.CTkButton(self, text = 'Generate Slides', width = 350)
-        self.genSlides.place(x = centerObj(350), y = 250)
+        self.wordAmount = ctk.CTkEntry(self, placeholder_text = 'Words per Slide', width = 350)
+        self.wordAmount.place(x = centerObj(350), y = 230)
+
+        self.genSlides = ctk.CTkButton(self, text = 'Generate Slides', width = 350, command = generateSlides)
+        self.genSlides.place(x = centerObj(350), y = 270)
 
 
 
@@ -74,15 +80,6 @@ class App(ctk.CTk):
 
         self.apiHelp = ctk.CTkButton(self, text = 'Help', width = 50, command = helpButton)
         self.apiHelp.place(x = 235, y = 150)
-
-
-
-        # Right Side
-
-        # self.slidesFrame = ctk.CTkScrollableFrame(self, width = 250, height = 300, label_text = 'Generated Slides')
-        self.slidesFrame = ScrollableEntryFrame(self, label_text = 'Generated Slides', width = 250, height = 300, item_list=[f'item {i}' for i in range(50)])
-        self.slidesFrame.place(x = 700, y = 150)
-
 
 
 
