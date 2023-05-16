@@ -29,11 +29,11 @@ if __name__ == '__main__':
 
             self.command = command
             self.slideList = []
-            for i, item in enumerate(item_list):
+            for item in item_list:
                 self.add_item(item)
 
         def add_item(self, item):
-            slide = ctk.CTkEntry(self, placeholder_text = item)           # add generated slides
+            slide = ctk.CTkEntry(self, placeholder_text = item, width = 250)           # add generated slides
             if self.command is not None:
                 slide.configure(command=self.command)
             slide.grid(row=len(self.slideList), column=0, pady=(0, 10))
@@ -91,7 +91,7 @@ if __name__ == '__main__':
             self.info = ctk.CTkLabel(self, text = 'Info', font = ('arial', 30))
             self.info.place(x = 125, y = 35)
 
-
+    
             if aiKey == '':
                 self.apiKey = ctk.CTkEntry(self, placeholder_text = 'API Key', width = 180)
             else:
@@ -107,13 +107,10 @@ if __name__ == '__main__':
 
 
             def generateSlides():
-                self.slidesFrame = ScrollableEntryFrame(self, label_text = 'Generated Slides', width = 250, height = 300, item_list=[f'item {i}' for i in range(50)])
-                self.slidesFrame.place(x = 700, y = 150)
+                aiKey = self.apiKey.get()
 
 
                 # TODO
-                aiKey = self.apiKey.get()
-                
                 # with open('data.py', 'r+') as f:            # TODO           add overwrite if api key is not none and if api key is saved then display as placeholder text
                 #     content = f.read()
                 #     # Replace the empty quotes with your text
@@ -169,6 +166,11 @@ if __name__ == '__main__':
 
                 generatedSlides = strToList(generatedSlides)
 
+                self.slidesFrame = ScrollableEntryFrame(self, label_text = 'Generated Slides', width = 250, height = 300, item_list=generatedSlides)
+                self.slidesFrame.place(x = 700, y = 150)
+
+                input()
+
                 print('These is the slides it will create: \n')                  # shows the slides it will make
                 for slide in generatedSlides:
                     print(slide)
@@ -204,7 +206,7 @@ if __name__ == '__main__':
             
 
             self.genSlides = ctk.CTkButton(self, text = 'Generate Slides', width = 350, command = generateSlides)
-            self.genSlides.place(x = centerObj(350), y = 250)
+            self.genSlides.place(x = centerObj(350), y = 270)
 
 
 
