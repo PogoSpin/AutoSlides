@@ -16,13 +16,6 @@ def strToList(string):
 # run
 
 if __name__ == '__main__':
-
-    # Load Data
-    aiKey = data.key                   # gets your api key from data.py
-    positions = data.positions         # gets the button positions from data.py
-
-
-
     class ScrollableEntryFrame(ctk.CTkScrollableFrame):                       # Generated slides scroll frame
         def __init__(self, master, item_list, command=None, **kwargs):
             super().__init__(master, **kwargs)
@@ -55,6 +48,10 @@ if __name__ == '__main__':
         def __init__(self):
             super().__init__()
             # app setup
+
+            # Load Data
+            self.aiKey = data.key                   # gets your api key from data.py
+            self.positions = data.positions         # gets the button positions from data.py
 
             self.size = (1000, 700)
 
@@ -92,10 +89,10 @@ if __name__ == '__main__':
             self.info.place(x = 125, y = 35)
 
     
-            if aiKey == '':
+            if self.aiKey == '':
                 self.apiKey = ctk.CTkEntry(self, placeholder_text = 'API Key', width = 180)
             else:
-                self.apiKey = ctk.CTkEntry(self, placeholder_text = aiKey, width = 180)
+                self.apiKey = ctk.CTkEntry(self, placeholder_text = self.aiKey, width = 180)
 
 
             self.apiKey.place(x = 50, y = 150)
@@ -107,18 +104,23 @@ if __name__ == '__main__':
 
 
             def generateSlides():
-                aiKey = self.apiKey.get()
+                typedKey = self.apiKey.get()
+                if typedKey != '':                    # only uses the typed key if you type something
+                    with open('data.py', 'r+') as f:            # overwrites the saved api key with the new one
+                        content = f.read()
+                        # Replace the empty quotes with your text
+                        print(typedKey)
+                        new_content = content.replace(f"{self.aiKey}", f"{typedKey}")
+                        f.seek(0)
+                        f.write(new_content)
+                        f.truncate()
 
+                    aiKey = typedKey
 
-                # TODO
-                # with open('data.py', 'r+') as f:            # TODO           add overwrite if api key is not none and if api key is saved then display as placeholder text
-                #     content = f.read()
-                #     # Replace the empty quotes with your text
-                #     new_content = content.replace("''", f"'{aiKey}'")
-                #     f.seek(0)
-                #     f.write(new_content)
-                #     f.truncate()
+                
+                print(aiKey)
 
+                input()
 
 
 
@@ -126,7 +128,7 @@ if __name__ == '__main__':
 
 
 
-                slides = Slides(positions[0], positions[1], positions[2])                  # creats a slides object and loads in the positios of the elements
+                slides = Slides(self.positions[0], self.positions[1], self.positions[2])                  # creats a slides object and loads in the positios of the elements
 
 
 
