@@ -22,6 +22,7 @@ if __name__ == '__main__':
 
             self.command = command
             self.slideList = []
+            self.slideTitles = item_list
             for item in item_list:
                 self.add_item(item)
 
@@ -40,7 +41,14 @@ if __name__ == '__main__':
                     return
 
         def get_checked_items(self):
-            return [slide.cget('text') for slide in self.slideList if slide.get() == 1]
+            result = []
+            for id, slide in enumerate(self.slideList):    # loops over all the entries and adds the value to the return list, if nothing was changed it returns the placeholder text
+                if slide.get() != '':
+                    result.append(slide.get())
+                else:
+                    result.append(self.slideTitles[id])
+
+            return result               # return the slide titles
 
 
 
@@ -116,8 +124,6 @@ if __name__ == '__main__':
 
                     self.aiKey = typedKey
 
-
-                print(self.aiKey)
                 # Start of the generating process program.
 
 
@@ -162,12 +168,12 @@ if __name__ == '__main__':
 
                 generatedSlides = strToList(generatedSlides)
 
-                self.slidesFrame = ScrollableEntryFrame(self, label_text = 'Generated Slides', width = 250, height = 300, item_list=generatedSlides)
+                self.slidesFrame = ScrollableEntryFrame(self, label_text = 'Generated Slides', width = 250, height = 300, item_list = generatedSlides)
                 self.slidesFrame.place(x = 700, y = 150)
                 
                 def createSlides():
-                    input('creating slides')
-
+                    generatedSlides = self.slidesFrame.get_checked_items()          # overwrites the generated slides with the changes the user made
+                    
                     for slide in generatedSlides:
                         slideText = None
 
