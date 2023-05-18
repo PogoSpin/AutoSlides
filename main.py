@@ -109,21 +109,15 @@ if __name__ == '__main__':
                     with open('data.py', 'r+') as f:            # overwrites the saved api key with the new one
                         content = f.read()
                         # Replace the empty quotes with your text
-                        print(typedKey)
                         new_content = content.replace(f"'{self.aiKey}'", f"'{typedKey}'")
                         f.seek(0)
                         f.write(new_content)
                         f.truncate()
 
-                    aiKey = typedKey
-
-                
-                print(aiKey)
-
-                input()
+                    self.aiKey = typedKey
 
 
-
+                print(self.aiKey)
                 # Start of the generating process program.
 
 
@@ -149,7 +143,7 @@ if __name__ == '__main__':
                     succeded = False
 
                     try:
-                        generatedSlides = gpt.generate(f'I am making a powerpoint presentation about {topic}. Create a single line python list with the slide titles of each slide like this ["slide1", "slide2", "slide3"]. Create a max of {amountOfSlides} slides.', aiKey)
+                        generatedSlides = gpt.generate(f'I am making a powerpoint presentation about {topic}. Create a single line python list with the slide titles of each slide like this ["slide1", "slide2", "slide3"]. Create a max of {amountOfSlides} slides.', self.aiKey)
                         succeded = True
                     except:
                         print(f'Failed to generate slide titles on try {i+1}. Trying again in {i**2} second\s... ')
@@ -159,7 +153,7 @@ if __name__ == '__main__':
                         break
                 
                 if succeded:
-                    print()
+                    print() 
                 else:
                     print(f'\nFailed to generate slide titles after {amountOfAttempts + 1} attempts. ')
                     quit()
@@ -170,41 +164,37 @@ if __name__ == '__main__':
 
                 self.slidesFrame = ScrollableEntryFrame(self, label_text = 'Generated Slides', width = 250, height = 300, item_list=generatedSlides)
                 self.slidesFrame.place(x = 700, y = 150)
-
-                input()
-
-                print('These is the slides it will create: \n')                  # shows the slides it will make
-                for slide in generatedSlides:
-                    print(slide)
-
-                input('\nStart? ')
-
-                time.sleep(2)
-                for slide in generatedSlides:
-                    slideText = None
-
-                    for i in range(amountOfAttempts): # Attempts to generate slide text again if it fails
-                        succeded = False
-
-                        try:
-                            slideText = gpt.generate(f'I am making a powerpoint presentation about {topic}. Write the body for this slide title: {slide}. Use a max of {wordLimit} words. ', aiKey).strip()
-                            succeded = True
-                        except:
-                            print(f'Failed to generate slide text on try {i+1}. Trying again in {i**2} second\s... ')
-                            time.sleep(i**2)
-
-                        if succeded:
-                            break
                 
-                    if succeded:
-                        slides.createNewSlide(slide, slideText)
-                    else:
-                        print(f'\nFailed to generate slide content after {amountOfAttempts} attempts. ')
-                        quit()
+                def createSlides():
+                    input('creating slides')
+
+                    for slide in generatedSlides:
+                        slideText = None
+
+                        for i in range(amountOfAttempts): # Attempts to generate slide text again if it fails
+                            succeded = False
+
+                            try:
+                                slideText = gpt.generate(f'I am making a powerpoint presentation about {topic}. Write the body for this slide title: {slide}. Use a max of {wordLimit} words. ', self.apiKey).strip()
+                                succeded = True
+                            except:
+                                print(f'Failed to generate slide text on try {i+1}. Trying again in {i**2} second\s... ')
+                                time.sleep(i**2)
+
+                            if succeded:
+                                break
+                    
+                        if succeded:
+                            slides.createNewSlide(slide, slideText)
+                        else:
+                            print(f'\nFailed to generate slide content after {amountOfAttempts} attempts. ')
+                            quit()
 
 
-                print('\nTask Completed! ')
+                    print('\nTask Completed! ')
 
+                self.createSlides = ctk.CTkButton(self, text = 'Create Slides', width = 350, height = 58, font = ('arial', 20), command = createSlides)
+                self.createSlides.place(x = centerObj(350), y = 539)
             
 
             self.genSlides = ctk.CTkButton(self, text = 'Generate Slides', width = 350, command = generateSlides)
