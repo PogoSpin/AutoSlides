@@ -173,7 +173,7 @@ if __name__ == '__main__':
                 
                 def createSlides():
                     generatedSlides = self.slidesFrame.get_checked_items()          # overwrites the generated slides with the changes the user made
-                    
+
                     for slide in generatedSlides:
                         slideText = None
 
@@ -181,7 +181,7 @@ if __name__ == '__main__':
                             succeded = False
 
                             try:
-                                slideText = gpt.generate(f'I am making a powerpoint presentation about {topic}. Write the body for this slide title: {slide}. Use a max of {wordLimit} words. ', self.apiKey).strip()
+                                slideText = gpt.generate(f'I am making a powerpoint presentation about {topic}. Write the body for this slide title: {slide}. Use a max of {wordLimit} words. ', self.aiKey).strip()
                                 succeded = True
                             except:
                                 print(f'Failed to generate slide text on try {i+1}. Trying again in {i**2} second\s... ')
