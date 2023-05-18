@@ -110,7 +110,7 @@ if __name__ == '__main__':
                         content = f.read()
                         # Replace the empty quotes with your text
                         print(typedKey)
-                        new_content = content.replace(f"{self.aiKey}", f"{typedKey}")
+                        new_content = content.replace(f"'{self.aiKey}'", f"'{typedKey}'")
                         f.seek(0)
                         f.write(new_content)
                         f.truncate()
