@@ -1,4 +1,5 @@
 import pyautogui as pa           # run "pip install pyautogui" to intall
+
 import customtkinter as ctk
 import gptAPI as gpt
 import ast, time, data, webbrowser
@@ -172,32 +173,67 @@ if __name__ == '__main__':
                 self.slidesFrame.place(x = 700, y = 150)
                 
                 def createSlides():
-                    generatedSlides = self.slidesFrame.get_checked_items()          # overwrites the generated slides with the changes the user made
+                    # Creating position
+                    if not self.positions:              # if there is no position data yet
+                        self.positions = []
 
-                    for slide in generatedSlides:
-                        slideText = None
+                        print('No position data found so it will be created now.\n')
+                        print('Because this is the first time you lauched the program you will have to record the positions of all the google slide elements.')
+                        print('Just follow the next instructions. \n')
+                        print('Prepare you google slides presentation in the background with this terminal in front. ')
+                        input('When ready, hover your mouse over the "add slide button" (the plus sign on the top left corner) and press enter.')
 
-                        for i in range(amountOfAttempts): # Attempts to generate slide text again if it fails
-                            succeded = False
+                        x, y = pa.position()                             #saves mouse pos
+                        self.positions.append((x, y))
 
-                            try:
-                                slideText = gpt.generate(f'I am making a powerpoint presentation about {topic}. Write the body for this slide title: {slide}. Use a max of {wordLimit} words. ', self.aiKey).strip()
-                                succeded = True
-                            except:
-                                print(f'Failed to generate slide text on try {i+1}. Trying again in {i**2} second\s... ')
-                                time.sleep(i**2)
+                        input('Done. Now when ready, hover your mouse over the title text box and press enter. (this is where the AI will type the title of each slide) ')
 
+                        x, y = pa.position()                             #saves mouse pos
+                        self.positions.append((x, y))
+
+                        input('Done. Now last of all, when ready, hover your mouse over the main body text box and press enter. (this is where the AI will type in all the text for each slide) ')
+
+                        x, y = pa.position()                             #saves mouse pos
+                        self.positions.append((x, y))
+
+                        print("\nPerfect, the positions have been saved to next time you won't have to do this again. ")
+
+                        with open('data.py', 'r+') as f:
+                            content = f.read()
+                            # Replace the empty quotes with your text
+                            new_content = content.replace("None", f"{self.positions}")
+                            f.seek(0)
+                            f.write(new_content)
+                            f.truncate()
+
+                        print('Now you can actually start. Press the create slides button again when you are ready. \n')
+                    else:
+                        generatedSlides = self.slidesFrame.get_checked_items()          # overwrites the generated slides with the changes the user made
+
+                        for slide in generatedSlides:
+                            slideText = None
+
+                            for i in range(amountOfAttempts): # Attempts to generate slide text again if it fails
+                                succeded = False
+
+                                try:
+                                    slideText = gpt.generate(f'I am making a powerpoint presentation about {topic}. Write the body for this slide title: {slide}. Use a max of {wordLimit} words. ', self.aiKey).strip()
+                                    succeded = True
+                                except:
+                                    print(f'Failed to generate slide text on try {i+1}. Trying again in {i**2} second\s... ')
+                                    time.sleep(i**2)
+
+                                if succeded:
+                                    break
+                        
                             if succeded:
-                                break
-                    
-                        if succeded:
-                            slides.createNewSlide(slide, slideText)
-                        else:
-                            print(f'\nFailed to generate slide content after {amountOfAttempts} attempts. ')
-                            quit()
+                                slides.createNewSlide(slide, slideText)
+                            else:
+                                print(f'\nFailed to generate slide content after {amountOfAttempts} attempts. ')
+                                quit()
 
-
-                    print('\nTask Completed! ')
+                        print('\nTask Completed! ')
+                        
 
                 self.createSlides = ctk.CTkButton(self, text = 'Create Slides', width = 350, height = 58, font = ('arial', 20), command = createSlides)
                 self.createSlides.place(x = centerObj(350), y = 539)
@@ -216,41 +252,8 @@ if __name__ == '__main__':
     ctk.set_default_color_theme('dark-blue')
     app = App()
     app.mainloop()
+    
 
-
-    # # Creating position
-    # if not positions:              # if there is no position data yet
-    #     positions = []
-
-    #     print('No position data found so it will be created now.\n')
-    #     print('Because this is the first time you lauched the program you will have to record the positions of all the google slide elements.')
-    #     print('Just follow the next instructions. \n')
-    #     print('Prepare you google slides presentation in the background with this terminal in front. ')
-    #     input('When ready, hover your mouse over the "add slide button" (the plus sign on the top left corner) and press enter.')
-
-    #     x, y = pa.position()                             #saves mouse pos
-    #     positions.append((x, y))
-
-    #     input('Done. Now when ready, hover your mouse over the title text box and press enter. (this is where the AI will type the title of each slide) ')
-
-    #     x, y = pa.position()                             #saves mouse pos
-    #     positions.append((x, y))
-
-    #     input('Done. Now last of all, when ready, hover your mouse over the main body text box and press enter. (this is where the AI will type in all the text for each slide) ')
-
-    #     x, y = pa.position()                             #saves mouse pos
-    #     positions.append((x, y))
-
-    #     print("\nPerfect, the positions have been saved to next time you won't have to do this again. ")
-    #     print('Now you can actually start. \n')
-
-    #     with open('data.py', 'r+') as f:
-    #         content = f.read()
-    #         # Replace the empty quotes with your text
-    #         new_content = content.replace("None", f"{positions}")
-    #         f.seek(0)
-    #         f.write(new_content)
-    #         f.truncate()
 
 
 
