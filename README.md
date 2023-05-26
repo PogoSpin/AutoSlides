@@ -18,7 +18,7 @@ It does the job but there is no GUI and it doesn't give a lot of options when it
 
 ## Installation
 Clone the project and install the requirements.
-1. `git clone https://github.com/PogoSpin/autoSlides`
+1. `git clone https://github.com/PogoSpin/AutoSlides`
 2. `pip install -r requirements.txt`
 
 ## Usage
